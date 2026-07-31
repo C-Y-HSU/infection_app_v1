@@ -134,13 +134,18 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     else:
         result_text = None
         
-        # Spinner 載入區塊：計算過程中顯示 checkit.gif，運算結束後 GIF 會自動消失
-        with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
+        # 1. 建立一個動態佔位容器 (用來放載入中的 GIF)
+        gif_placeholder = st.empty()
+        
+        # 在容器內顯示動畫與提示
+        with gif_placeholder.container():
             try:
                 st.image("checkit.gif", caption="AI感管員正在仔細比對條文與護理紀錄...", width=250)
             except Exception:
                 pass
-            
+
+        # 2. 執行 API 運算 (搭配文字提示)
+        with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
             try:
                 # 初始化 Google GenAI Client
                 client = genai.Client(api_key=gemini_api_key)
@@ -205,12 +210,15 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
 
-        # Spinner 外部：當計算完畢、GIF 消失後，在此處渲染結果與 PNG 圖示
+        # 3. 關鍵修正：計算完成後，直接清空 GIF 佔位容器！
+        gif_placeholder.empty()
+
+        # 4. 渲染結果與 PNG 圖片
         if result_text:
             st.success("✅ 審核完成！")
             st.markdown("### 📊 審核報告產出")
             
-            # 根據 AI 判讀結果動態顯示不同圖示（嚴格優先比對否定與疑義語意）
+            # 根據 AI 判讀結果動態顯示不同圖示
             if "🔴 不符合收案" in result_text or "不符合收案" in result_text or "未達收案" in result_text:
                 try:
                     st.image("fail.png", caption="未達收案門檻，免予通報。", width=200)
