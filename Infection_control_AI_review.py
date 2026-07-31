@@ -24,13 +24,6 @@ st.markdown("""
         color: #4B5563;
         margin-bottom: 2rem;
     }
-    .card {
-        background-color: #F8FAFC;
-        padding: 1.5rem;
-        border-radius: 12px;
-        border-left: 5px solid #2563EB;
-        margin-bottom: 1.5rem;
-    }
     .stButton>button {
         background-color: #2563EB;
         color: white;
@@ -53,16 +46,16 @@ if "GEMINI_API_KEY" in st.secrets:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/hospital-3.png", width=80)
+    st.image("[https://img.icons8.com/color/96/hospital-3.png](https://img.icons8.com/color/96/hospital-3.png)", width=80)
     st.title("⚙️ 系統資訊")
     
     # 僅作為狀態顯示，不再提供輸入框
     if gemini_api_key:
         st.success("🔒 AI 審核引擎服務中")
     else:
-        st.error("⚠️ 系統尚未設定 API Key，請聯繫管理者至後台設定。")
+        st.error("⚠️ 系統尚未設定 API Key，請聯繫管理者至後台 Secrets 設定。")
     
-    st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與 AI 語意判讀[cite: 1]。")
+    st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與 AI 語意判讀。")
 
 # 3. 頁面標題
 st.markdown('<div class="main-header">🏥 長照機構感染監測 AI 審核系統</div>', unsafe_allow_html=True)
@@ -136,7 +129,7 @@ st.markdown("---")
 # 5. 啟動 AI 審核按鈕與 Prompt 邏輯
 if st.button("🚀 開始 AI 監測定義自動審核"):
     if not gemini_api_key:
-        st.error("⚠️ 請先在左側邊欄輸入你的 Gemini API Key！")
+        st.error("⚠️ 請先至 Streamlit Cloud 後台 Settings -> Secrets 設定 GEMINI_API_KEY！")
     elif not nursing_note and not (symptom_resp or symptom_uti or symptom_gi_skin or symptoms_general):
         st.warning("⚠️ 請至少在 Step 2 勾選症狀，或在 Step 3 貼上護理紀錄！")
     else:
@@ -144,7 +137,9 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
             try:
                 # 設定 Gemini API
                 genai.configure(api_key=gemini_api_key)
-              model = genai.GenerativeModel('gemini-1.5-flash')
+                
+                # 改用目前最主流穩定之 gemini-2.0-flash 模型
+                model = genai.GenerativeModel('gemini-2.0-flash')
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
@@ -197,10 +192,13 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 # 呼叫 Gemini
                 response = model.generate_content(f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}")
                 
-                # 顯示結果卡片
+                # 顯示結果
                 st.success("✅ 審核完成！")
                 st.markdown("### 📊 審核報告產出")
-                st.markdown(f'<div class="card">{response.text}</div>', unsafe_allow_html=True)
+                
+                # 使用原生 container 美化輸出，確保 Markdown 格式（標題、程式碼區塊）完美渲染
+                with st.container(border=True):
+                    st.markdown(response.text)
 
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
