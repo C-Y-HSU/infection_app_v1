@@ -139,7 +139,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 genai.configure(api_key=gemini_api_key)
                 
                 # 改用目前最主流穩定之 gemini-2.0-flash 模型
-                model = genai.GenerativeModel('gemini-2.0-flash')
+                model = genai.GenerativeModel('gemini-1.5-pro')
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
