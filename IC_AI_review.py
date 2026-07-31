@@ -139,7 +139,20 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 genai.configure(api_key=gemini_api_key)
                 
                 # 改用目前最主流穩定之 gemini-2.0-flash 模型
-                model = genai.GenerativeModel('gemini-1.5-pro')
+                # 自動搜尋目前 API 金鑰可用的文字生成模型
+available_models = [
+    m.name for m in genai.list_models() 
+    if 'generateContent' in m.supported_generation_methods
+]
+
+# 優先選擇 Flash 或 Pro，如果都沒有就拿第一個可用的模型
+selected_model_name = next(
+    (m for m in available_models if 'flash' in m or 'pro' in m), 
+    available_models[0]
+)
+
+# 使用找到的模型名稱建立物件
+model = genai.GenerativeModel(selected_model_name)
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
