@@ -9,7 +9,7 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-st.image("checkit.gif", width=150)
+
 # 自訂 CSS 樣式美化
 st.markdown("""
     <style>
@@ -132,7 +132,9 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     elif not nursing_note and not (symptom_resp or symptom_uti or symptom_gi_skin or symptoms_general):
         st.warning("⚠️ 請至少在 Step 2 勾選症狀，或在 Step 3 貼上護理紀錄！")
     else:
-        with st.spinner("🤖 正在比對《台灣長期照護機構感染監測定義》中，請稍候..."):
+        with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
+        # 在等待 AI 回傳時秀出動圖與趣味文字
+        st.image("checkit.gif", caption="AI感管員正在仔細比對條文與護理紀錄...", width=250)
             try:
                 # 初始化最新版的 Google GenAI Client
                 client = genai.Client(api_key=gemini_api_key)
