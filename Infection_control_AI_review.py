@@ -47,11 +47,21 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. 側邊欄設定 API Key
+# 2. 安全讀取 API Key (直接從 Secrets 載入，不在前端顯示任何輸入欄位)
+gemini_api_key = ""
+if "GEMINI_API_KEY" in st.secrets:
+    gemini_api_key = st.secrets["GEMINI_API_KEY"]
+
 with st.sidebar:
     st.image("https://img.icons8.com/color/96/hospital-3.png", width=80)
-    st.title("⚙️ 系統設定")
-    gemini_api_key = st.text_input("輸入 Gemini API Key", type="password")
+    st.title("⚙️ 系統資訊")
+    
+    # 僅作為狀態顯示，不再提供輸入框
+    if gemini_api_key:
+        st.success("🔒 AI 審核引擎服務中")
+    else:
+        st.error("⚠️ 系統尚未設定 API Key，請聯繫管理者至後台設定。")
+    
     st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與 AI 語意判讀[cite: 1]。")
 
 # 3. 頁面標題
