@@ -198,35 +198,35 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                     contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
                 )
                 
-                # 顯示結果
+                # 顯示審核完成結果與對應圖示
                 st.success("✅ 審核完成！")
                 st.markdown("### 📊 審核報告產出")
                 
-                with st.container(border=True):
-                    # 7. 顯示結果
-                st.success("✅ 審核完成！")
-                st.markdown("### 📊 審核報告產出")
-                
-                # --- 🎯 根據 AI 審核結果自動顯示對應圖片 ---
                 result_text = response.text
                 
-                if "✅符合收案" in result_text or "符合收案" in result_text:
+                # 根據 AI 判讀結果動態顯示不同圖示
+                if "✅ 符合收案" in result_text or "符合收案" in result_text:
                     try:
                         st.image("yes.png", caption="符合監測定義，請依規定完成通報！", width=200)
                     except Exception:
-                        st.success("🎉 通過判定！")
-                        
+                        pass
                 elif "⁉️ 疑義待補充" in result_text or "疑義" in result_text:
                     try:
-                        st.image("notsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
+                        st.image("wnotsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
                     except Exception:
-                        st.warning("⚠️ 疑義待補充！")
-                        
+                        pass
                 elif "🔴 不符合收案" in result_text or "不符合" in result_text:
                     try:
-                        st.image("fail.png", caption="未達收案門檻，免予通報。", width=200)
+                        st.image("fail.png", caption="未達收案門檻，不予通報。", width=200)
                     except Exception:
-                        st.error("❌ 不符合收案！")
+                        pass
+
+                # 渲染 AI 報告詳細內容 (注意：裡面的程式碼必須比 with 再縮排一層)
+                with st.container(border=True):
+                    st.markdown(result_text)
+
+            except Exception as e:
+                st.error(f"❌ 執行過程發生錯誤：{str(e)}")
                 # ----------------------------------------------
 
                 # 渲染 AI 產出的 Markdown 審核詳細報告
