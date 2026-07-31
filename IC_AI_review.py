@@ -133,8 +133,12 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
         st.warning("⚠️ 請至少在 Step 2 勾選症狀，或在 Step 3 貼上護理紀錄！")
     else:
         with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
-        # 在等待 AI 回傳時秀出動圖與趣味文字
-        st.image("checkit.gif", caption="AI感管員正在仔細比對條文與護理紀錄...", width=250)
+            # 安全讀取 GIF，就算圖片不存在也不會讓系統崩潰
+            try:
+                st.image("checkit.gif", caption="AI感管員正在仔細比對條文與護理紀錄...", width=250)
+            except Exception:
+                pass  # 若找不到圖片則自動略過
+            
             try:
                 # 初始化最新版的 Google GenAI Client
                 client = genai.Client(api_key=gemini_api_key)
@@ -188,7 +192,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 ```
                 """
 
-                # 使用最新的 Gemini 3.6 Flash 模型進行內容生成
+                # 使用 Gemini 3.6 Flash 模型進行內容生成
                 response = client.models.generate_content(
                     model='gemini-3.6-flash',
                     contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
