@@ -132,6 +132,9 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     elif not nursing_note and not (symptom_resp or symptom_uti or symptom_gi_skin or symptoms_general):
         st.warning("⚠️ 請至少在 Step 2 勾選症狀，或在 Step 3 貼上護理紀錄！")
     else:
+        result_text = None
+        
+        # 1. Spinner 載入區塊：計算過程中顯示 checkit.gif，運算結束後 GIF 會自動消失
         with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
             # 安全讀取 GIF，就算圖片不存在也不會讓系統崩潰
             try:
@@ -198,40 +201,37 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                     contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
                 )
                 
-                # 顯示審核完成結果與對應圖示
-                st.success("✅ 審核完成！")
-                st.markdown("### 📊 審核報告產出")
-                
                 result_text = response.text
-                
-               # 根據 AI 判讀結果動態顯示不同圖示（嚴格優先比對否定與疑義語意）
-                if "🔴 不符合收案" in result_text or "不符合收案" in result_text or "未達收案" in result_text:
-                    try:
-                        st.image("fail.png", caption="未達收案門檻，免予通報。", width=200)
-                    except Exception:
-                        pass
-                elif "⁉️ 疑義待補充" in result_text or "疑義待補充" in result_text or "待補充" in result_text:
-                    try:
-                        st.image("notsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
-                    except Exception:
-                        pass
-                elif "✅ 符合收案" in result_text or "符合收案" in result_text:
-                    try:
-                        st.image("yes.png", caption="符合監測定義，請依規定完成通報！", width=200)
-                    except Exception:
-                        pass
-
-                # 渲染 AI 報告詳細內容 (注意：裡面的程式碼必須比 with 再縮排一層)
-                with st.container(border=True):
-                    st.markdown(result_text)
 
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
-                # ----------------------------------------------
 
-                # 渲染 AI 產出的 Markdown 審核詳細報告
-                with st.container(border=True):
-                    st.markdown(result_text)
+        # 2. Spinner 外部：當計算完畢、GIF 消失後，在此處順暢渲染結果與 PNG 圖示
+        if result_text:
+            # 顯示審核完成結果與對應圖示
+            st.success("✅ 審核完成！")
+            st.markdown("### 📊 審核報告產出")
+            
+            # 根據 AI 判讀結果動態顯示不同圖示（嚴格優先比對否定與疑義語意）
+            if "🔴 不符合收案" in result_text or "不符合收案" in result_text or "未達收案" in result_text:
+                try:
+                    st.image("fail.png", caption="未達收案門檻，免予通報。", width=200)
+                except Exception:
+                    pass
+            elif "⁉️ 疑義待補充" in result_text or "疑義待補充" in result_text or "待補充" in result_text:
+                try:
+                    st.image("notsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
+                except Exception:
+                    pass
+            elif "✅ 符合收案" in result_text or "符合收案" in result_text:
+                try:
+                    st.image("yes.png", caption="符合監測定義，請依規定完成通報！", width=200)
+                except Exception:
+                    pass
+
+            # 渲染 AI 報告詳細內容
+            with st.container(border=True):
+                st.markdown(result_text)
 
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
