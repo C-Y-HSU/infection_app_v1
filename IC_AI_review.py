@@ -134,16 +134,15 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     else:
         result_text = None
         
-        # 1. Spinner 載入區塊：計算過程中顯示 checkit.gif，運算結束後 GIF 會自動消失
+        # Spinner 載入區塊：計算過程中顯示 checkit.gif，運算結束後 GIF 會自動消失
         with st.spinner("🤖 AI 正在嚴格比對監測定義中..."):
-            # 安全讀取 GIF，就算圖片不存在也不會讓系統崩潰
             try:
                 st.image("checkit.gif", caption="AI感管員正在仔細比對條文與護理紀錄...", width=250)
             except Exception:
-                pass  # 若找不到圖片則自動略過
+                pass
             
             try:
-                # 初始化最新版的 Google GenAI Client
+                # 初始化 Google GenAI Client
                 client = genai.Client(api_key=gemini_api_key)
 
                 # 組合 Prompt 輸入內容
@@ -206,9 +205,8 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
 
-        # 2. Spinner 外部：當計算完畢、GIF 消失後，在此處順暢渲染結果與 PNG 圖示
+        # Spinner 外部：當計算完畢、GIF 消失後，在此處渲染結果與 PNG 圖示
         if result_text:
-            # 顯示審核完成結果與對應圖示
             st.success("✅ 審核完成！")
             st.markdown("### 📊 審核報告產出")
             
@@ -232,6 +230,3 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
             # 渲染 AI 報告詳細內容
             with st.container(border=True):
                 st.markdown(result_text)
-
-            except Exception as e:
-                st.error(f"❌ 執行過程發生錯誤：{str(e)}")
