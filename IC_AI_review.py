@@ -46,7 +46,7 @@ if "GEMINI_API_KEY" in st.secrets:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 
 with st.sidebar:
-    st.image("[https://img.icons8.com/color/96/hospital-3.png](https://img.icons8.com/color/96/hospital-3.png)", width=80)
+    st.image("https://img.icons8.com/color/96/hospital-3.png", width=80)
     st.title("⚙️ 系統資訊")
     
     # 僅作為狀態顯示，不再提供輸入框
