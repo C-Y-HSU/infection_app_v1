@@ -144,7 +144,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
             try:
                 # 設定 Gemini API
                 genai.configure(api_key=gemini_api_key)
-               model = genai.GenerativeModel('gemini-2.0-flash')
+              model = genai.GenerativeModel('gemini-1.5-flash')
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
