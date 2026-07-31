@@ -1,5 +1,5 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
 import json
 
 # 1. 頁面基本設定 (美化版面)
@@ -40,13 +40,12 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. 安全讀取 API Key (直接從 Secrets 載入)
+# 2. 安全讀取 API Key (直接從 Streamlit Secrets 載入)
 gemini_api_key = ""
 if "GEMINI_API_KEY" in st.secrets:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 
 with st.sidebar:
-    # 修正原本圖片語法錯誤
     st.image("https://img.icons8.com/color/96/hospital-3.png", width=80)
     st.title("⚙️ 系統資訊")
     
@@ -135,22 +134,8 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     else:
         with st.spinner("🤖 AI 正在比對《台灣長期照護機構感染監測定義》中，請稍候..."):
             try:
-                # 設定 API Key
-                genai.configure(api_key=gemini_api_key)
-                
-                # 自動搜尋目前 API Key 底下可用且支援 generateContent 的模型名稱 (徹底避開 404)
-                available_models = [
-                    m.name for m in genai.list_models() 
-                    if 'generateContent' in m.supported_generation_methods
-                ]
-                
-                # 優先抓取含有 flash 或 pro 的模型，避免名稱不一致問題
-                selected_model_name = next(
-                    (m for m in available_models if 'flash' in m or 'pro' in m), 
-                    available_models[0]
-                )
-                
-                model = genai.GenerativeModel(selected_model_name)
+                # 初始化最新版的 Google GenAI Client
+                client = genai.Client(api_key=gemini_api_key)
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
@@ -200,8 +185,11 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 ```
                 """
 
-                # 呼叫 AI 產生審核報告
-                response = model.generate_content(f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}")
+                # 使用最新的 Gemini 2.5 Flash 模型進行內容生成
+                response = client.models.generate_content(
+                    model='gemini-2.5-flash',
+                    contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
+                )
                 
                 # 顯示結果
                 st.success("✅ 審核完成！")
