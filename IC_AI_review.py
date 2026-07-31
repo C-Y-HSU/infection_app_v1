@@ -40,20 +40,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2. 安全讀取 API Key (直接從 Secrets 載入，不在前端顯示任何輸入欄位)
+# 2. 安全讀取 API Key (直接從 Secrets 載入)
 gemini_api_key = ""
 if "GEMINI_API_KEY" in st.secrets:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 
 with st.sidebar:
+    # 修正原本圖片語法錯誤
     st.image("https://img.icons8.com/color/96/hospital-3.png", width=80)
     st.title("⚙️ 系統資訊")
     
-    # 僅作為狀態顯示，不再提供輸入框
     if gemini_api_key:
         st.success("🔒 AI 審核引擎服務中")
     else:
-        st.error("⚠️ 系統尚未設定 API Key，請聯繫管理者至後台 Secrets 設定。")
+        st.error("⚠️ 系統尚未設定 API Key，請至 Streamlit Cloud 的 Secrets 後台設定。")
     
     st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與 AI 語意判讀。")
 
@@ -135,24 +135,22 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     else:
         with st.spinner("🤖 AI 正在比對《台灣長期照護機構感染監測定義》中，請稍候..."):
             try:
-                # 設定 Gemini API
+                # 設定 API Key
                 genai.configure(api_key=gemini_api_key)
                 
-                # 改用目前最主流穩定之 gemini-2.0-flash 模型
-                # 自動搜尋目前 API 金鑰可用的文字生成模型
-available_models = [
-    m.name for m in genai.list_models() 
-    if 'generateContent' in m.supported_generation_methods
-]
-
-# 優先選擇 Flash 或 Pro，如果都沒有就拿第一個可用的模型
-selected_model_name = next(
-    (m for m in available_models if 'flash' in m or 'pro' in m), 
-    available_models[0]
-)
-
-# 使用找到的模型名稱建立物件
-model = genai.GenerativeModel(selected_model_name)
+                # 自動搜尋目前 API Key 底下可用且支援 generateContent 的模型名稱 (徹底避開 404)
+                available_models = [
+                    m.name for m in genai.list_models() 
+                    if 'generateContent' in m.supported_generation_methods
+                ]
+                
+                # 優先抓取含有 flash 或 pro 的模型，避免名稱不一致問題
+                selected_model_name = next(
+                    (m for m in available_models if 'flash' in m or 'pro' in m), 
+                    available_models[0]
+                )
+                
+                model = genai.GenerativeModel(selected_model_name)
 
                 # 組合 Prompt 輸入內容
                 user_payload = f"""
@@ -202,14 +200,13 @@ model = genai.GenerativeModel(selected_model_name)
                 ```
                 """
 
-                # 呼叫 Gemini
+                # 呼叫 AI 產生審核報告
                 response = model.generate_content(f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}")
                 
                 # 顯示結果
                 st.success("✅ 審核完成！")
                 st.markdown("### 📊 審核報告產出")
                 
-                # 使用原生 container 美化輸出，確保 Markdown 格式（標題、程式碼區塊）完美渲染
                 with st.container(border=True):
                     st.markdown(response.text)
 
