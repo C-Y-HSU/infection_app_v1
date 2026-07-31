@@ -46,7 +46,7 @@ if "GEMINI_API_KEY" in st.secrets:
     gemini_api_key = st.secrets["GEMINI_API_KEY"]
 
 with st.sidebar:
-    st.image("chillrelax.png", width=80)
+    st.image("chillrelax.png", width=320)
     st.title("⚙️ 系統資訊")
     
     if gemini_api_key:
