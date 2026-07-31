@@ -204,20 +204,20 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 
                 result_text = response.text
                 
-                # 根據 AI 判讀結果動態顯示不同圖示
-                if "✅ 符合收案" in result_text or "符合收案" in result_text:
+               # 根據 AI 判讀結果動態顯示不同圖示（嚴格優先比對否定與疑義語意）
+                if "🔴 不符合收案" in result_text or "不符合收案" in result_text or "未達收案" in result_text:
                     try:
-                        st.image("yes.png", caption="符合監測定義，請依規定完成通報！", width=200)
+                        st.image("fail.gif", caption="未達收案門檻，免予通報。", width=200)
                     except Exception:
                         pass
-                elif "⁉️ 疑義待補充" in result_text or "疑義" in result_text:
+                elif "🟡 疑義待補充" in result_text or "疑義待補充" in result_text or "待補充" in result_text:
                     try:
-                        st.image("wnotsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
+                        st.image("warning.gif", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
                     except Exception:
                         pass
-                elif "🔴 不符合收案" in result_text or "不符合" in result_text:
+                elif "🟢 符合收案" in result_text or "符合收案" in result_text:
                     try:
-                        st.image("fail.png", caption="未達收案門檻，不予通報。", width=200)
+                        st.image("pass.gif", caption="符合監測定義，請依規定完成通報！", width=200)
                     except Exception:
                         pass
 
