@@ -4,12 +4,12 @@ import json
 
 # 1. 頁面基本設定 (美化版面)
 st.set_page_config(
-    page_title="長照機構感染監測 AI 自動審核系統",
-    page_icon="🏥",
+    page_title="浩然敬老院感染通報自動審核系統",
+    page_icon="🔍",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
+st.image("checkit.gif", width=150)
 # 自訂 CSS 樣式美化
 st.markdown("""
     <style>
@@ -50,11 +50,11 @@ with st.sidebar:
     st.title("⚙️ 系統資訊")
     
     if gemini_api_key:
-        st.success("🔒 AI 審核引擎服務中")
+        st.success("🤖 讓AI感管員協助你判斷是否符合收案標準")
     else:
-        st.error("⚠️ 系統尚未設定 API Key，請至 Streamlit Cloud 的 Secrets 後台設定。")
+        st.error("😱 喔不!AI感管員好像不在位置上，請叫智淵叫他回來上班。")
     
-    st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與 AI 語意判讀。")
+    st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與判讀。🧾🖋")
 
 # 3. 頁面標題
 st.markdown('<div class="main-header">🏥 長照機構感染監測 AI 審核系統</div>', unsafe_allow_html=True)
@@ -63,15 +63,15 @@ st.markdown('<div class="sub-header">護理站與服務台專用 — 快速填�
 # 4. 表單分區 (Step 1, 2, 3)
 st.markdown("### 📋 臨床資料輸入")
 
-tab1, tab2, tab3 = st.tabs(["**Step 1: 住民與管路基線**", "**Step 2: 臨床症狀與體徵**", "**Step 3: 護理紀錄與報告貼上**"])
+tab1, tab2, tab3 = st.tabs(["**Step 1: 住民與管路基線**", "**Step 2: 症狀與生命徵象**", "**Step 3: 護理紀錄與報告貼上**"])
 
 with tab1:
-    st.markdown("#### 👤 1. 基本與基線狀態評估")
+    st.markdown("#### 👤 1. 基本資料與評估")
     col1, col2, col3 = st.columns(3)
     with col1:
         patient_id = st.text_input("住民姓名 / 床號", placeholder="例如：102-1 李○○")
     with col2:
-        eval_date = st.date_input("評估日期")
+        eval_date = st.date_input("發生日期")
     with col3:
         catheter_status = st.radio("導尿管使用狀態", ["無使用", "有使用（留置導尿管）"])
     
@@ -95,20 +95,20 @@ with tab2:
     with col_t1:
         temp_input = st.number_input("體溫量測數字 (℃)", min_value=35.0, max_value=42.0, value=36.5, step=0.1)
     with col_t2:
-        temp_site = st.selectbox("量測部位", ["耳溫", "額溫", "腋溫", "肛溫"])
+        temp_site = st.selectbox("量測部位", ["額溫", "耳溫", "腋溫", "肛溫"])
     
     st.markdown("**全身性與功能症狀：**")
     symptoms_general = st.multiselect(
         "選擇全身症狀 (可複選)",
-        ["寒顫", "肌肉酸痛", "頭痛", "極度倦怠感", "意識狀態變差 (GCS下降)", "日常生活功能變差 (巴氏量表下降)"]
+        ["寒顫", "肌肉酸痛", "頭痛", "極度倦怠感", "意識狀態變差 (GCS下降)", "日常生活功能變差 "]
     )
     
     st.markdown("**各系統局部症狀勾選：**")
     col_s1, col_s2, col_s3 = st.columns(3)
     
     with col_s1:
-        st.caption("🫁 呼吸道症狀")
-        symptom_resp = st.multiselect("呼吸道相關", ["新發作/加劇咳嗽", "新產生/增加膿痰", "肋膜性胸痛", "新產生/加劇濕囉音或喘鳴", "呼吸速率>25次/分", "流鼻水/打噴嚏/喉嚨痛"])
+        st.caption("🤧 呼吸道症狀")
+        symptom_resp = st.multiselect("呼吸道相關", ["新發生/加劇咳嗽", "新產生/增加膿痰", "肋膜性胸痛", "新產生/加劇濕囉音或喘鳴", "呼吸速率>25次/分", "流鼻水/打噴嚏/喉嚨痛"])
         
     with col_s2:
         st.caption("🚽 泌尿道症狀")
@@ -120,7 +120,7 @@ with tab2:
 
 with tab3:
     st.markdown("#### 📝 3. 護理紀錄與事件報告貼上")
-    st.info("💡 請直接複製貼上當班護理紀錄、檢驗報告 (如 U/A、X光、血培) 或事件描述，AI 會自動從中擷取關鍵數據與醫師診斷！")
+    st.info("💡 請直接複製貼上當班護理紀錄、檢驗報告 (如 抽血、X光、培養報告) 或事件描述，AI感管員會自動從中擷取關鍵數據與醫師診斷！")
     nursing_note = st.text_area("護理紀錄 / 檢驗數據 / 事件報告內容：", height=180, placeholder="例如：14:00 住民反映下腹部壓痛，導尿管引流液呈混濁且有嚴重惡臭沉澱物。採尿送檢 U/A 報告顯示 WBC 滿視野、膿尿。醫師開立抗生素治療...")
 
 st.markdown("---")
@@ -132,7 +132,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
     elif not nursing_note and not (symptom_resp or symptom_uti or symptom_gi_skin or symptoms_general):
         st.warning("⚠️ 請至少在 Step 2 勾選症狀，或在 Step 3 貼上護理紀錄！")
     else:
-        with st.spinner("🤖 AI 正在比對《台灣長期照護機構感染監測定義》中，請稍候..."):
+        with st.spinner("🤖 正在比對《台灣長期照護機構感染監測定義》中，請稍候..."):
             try:
                 # 初始化最新版的 Google GenAI Client
                 client = genai.Client(api_key=gemini_api_key)
@@ -159,10 +159,11 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 system_prompt = """
                 你是一名專業的「長照機構感染管制專任人員與醫療審核 AI 助手」。你的任務是嚴格根據《台灣長期照護機構內感染監測定義》指南，審核使用者輸入的資料，判斷是否符合收案定義。
 
-                請嚴格執行三大全局原則：
+                請嚴格執行四大全局原則：
                 1. 症狀必須是新發作或急性惡化（排除舊疾）。
                 2. 排除非感染因素（如心衰竭引起的呼吸困難、軟便劑引發的腹瀉等）。
                 3. 不可僅靠單一證據。
+                4. 如果都只有病人自述，卻沒有任何證據或是工作人員親眼看見或觀察到症狀，要高度懷疑該陳述的可信度，需補強證據或相關報告。
 
                 請對照 7 大類定義（呼吸道、UTI、腸胃道、眼耳鼻口、皮膚、血流、無法解釋發燒）。
 
@@ -185,7 +186,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 ```
                 """
 
-                # 使用最新的 Gemini 2.5 Flash 模型進行內容生成
+                # 使用最新的 Gemini 3.6 Flash 模型進行內容生成
                 response = client.models.generate_content(
                     model='gemini-3.6-flash',
                     contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
