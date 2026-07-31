@@ -50,20 +50,20 @@ with st.sidebar:
     st.title("⚙️ 系統資訊")
     
     if gemini_api_key:
-        st.success("🤖 讓AI感管員協助你判斷是否符合收案標準")
+        st.success("👁‍🗨 讓AI感管員協助你判斷是否符合收案標準")
     else:
         st.error("😱 喔不!AI感管員好像不在位置上，請叫智淵叫他回來上班。")
     
     st.info("💡 本系統根據《台灣長期照護機構之機構內感染監測定義》進行自動比對與判讀。🧾🖋")
 
 # 3. 頁面標題
-st.markdown('<div class="main-header">🏥 長照機構感染監測 AI 審核系統</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">護理站與服務台專用 — 快速填寫、自動檢核是否符合收案定義</div>', unsafe_allow_html=True)
+st.markdown('<div class="main-header">🔍 浩然敬老院感染通報自動審核系統</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-header">供護理站與服務台使用 — 快速填寫、自動檢核是否須送感控通報單</div>', unsafe_allow_html=True)
 
 # 4. 表單分區 (Step 1, 2, 3)
 st.markdown("### 📋 臨床資料輸入")
 
-tab1, tab2, tab3 = st.tabs(["**Step 1: 住民與管路基線**", "**Step 2: 症狀與生命徵象**", "**Step 3: 護理紀錄與報告貼上**"])
+tab1, tab2, tab3 = st.tabs(["**Step 1: 住民與管路**", "**Step 2: 症狀與生命徵象**", "**Step 3: 護理紀錄與報告貼上**"])
 
 with tab1:
     st.markdown("#### 👤 1. 基本資料與評估")
