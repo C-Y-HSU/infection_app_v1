@@ -187,7 +187,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
 
                 # 使用最新的 Gemini 2.5 Flash 模型進行內容生成
                 response = client.models.generate_content(
-                    model='gemini-2.5-flash',
+                    model='gemini-3.6-flash',
                     contents=f"{system_prompt}\n\n以下為待審核的個案資料：\n{user_payload}"
                 )
                 
