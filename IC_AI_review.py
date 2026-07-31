@@ -175,7 +175,7 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
 
                 請用清晰的 Markdown 格式輸出以下區塊：
                 ### 📌 1. 審核判定結果
-                - **結果**：【⭕️ 符合收案】/【⁉️ 疑義待補充】/【🔴 不符合收案】
+                - **結果**：【✅ 符合收案】/【⁉️ 疑義待補充】/【🔴 不符合收案】
                 - **符合之監測項目**：(例如：有症狀的泌尿道感染 - 使用導尿管)
 
                 ### 🔍 2. 資訊抽取與門檻比對
@@ -203,7 +203,35 @@ if st.button("🚀 開始 AI 監測定義自動審核"):
                 st.markdown("### 📊 審核報告產出")
                 
                 with st.container(border=True):
-                    st.markdown(response.text)
+                    # 7. 顯示結果
+                st.success("✅ 審核完成！")
+                st.markdown("### 📊 審核報告產出")
+                
+                # --- 🎯 根據 AI 審核結果自動顯示對應圖片 ---
+                result_text = response.text
+                
+                if "✅符合收案" in result_text or "符合收案" in result_text:
+                    try:
+                        st.image("yes.png", caption="符合監測定義，請依規定完成通報！", width=200)
+                    except Exception:
+                        st.success("🎉 通過判定！")
+                        
+                elif "⁉️ 疑義待補充" in result_text or "疑義" in result_text:
+                    try:
+                        st.image("notsure.png", caption="資料尚有疑義，請補強相關客觀數據或紀錄！", width=200)
+                    except Exception:
+                        st.warning("⚠️ 疑義待補充！")
+                        
+                elif "🔴 不符合收案" in result_text or "不符合" in result_text:
+                    try:
+                        st.image("fail.png", caption="未達收案門檻，免予通報。", width=200)
+                    except Exception:
+                        st.error("❌ 不符合收案！")
+                # ----------------------------------------------
+
+                # 渲染 AI 產出的 Markdown 審核詳細報告
+                with st.container(border=True):
+                    st.markdown(result_text)
 
             except Exception as e:
                 st.error(f"❌ 執行過程發生錯誤：{str(e)}")
